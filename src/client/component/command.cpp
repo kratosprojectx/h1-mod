@@ -32,7 +32,7 @@ namespace command
 			}
 		}
 
-		void client_command(const int client_num, void* a2)
+		void client_command(const int client_num)
 		{
 			params_sv params = {};
 
@@ -42,7 +42,7 @@ namespace command
 				handlers_sv[command](client_num, params);
 			}
 
-			client_command_hook.invoke<void>(client_num, a2);
+			client_command_hook.invoke<void>(client_num);
 		}
 
 		// Shamelessly stolen from Quake3
@@ -273,6 +273,15 @@ namespace command
 		}
 	}
 
+	void enum_assets(const game::XAssetType type, const std::function<void(game::XAssetHeader)>& callback, const bool includeOverride)
+	{
+		game::DB_EnumXAssets_Internal(type, static_cast<void(*)(game::XAssetHeader, void*)>([](game::XAssetHeader header, void* data)
+		{
+			const auto& cb = *static_cast<const std::function<void(game::XAssetHeader)>*>(data);
+			cb(header);
+		}), &callback, includeOverride);
+	}
+
 	class component final : public component_interface
 	{
 	public:
@@ -284,7 +293,7 @@ namespace command
 			}
 			else
 			{
-				utils::hook::call(0x1400D728F, &parse_commandline_stub); // MWR TEST
+				utils::hook::call(0x1400D728F, &parse_commandline_stub);
 				utils::hook::jump(0x14041D750, dvar_command_stub);
 
 				add_commands_mp();
@@ -302,29 +311,6 @@ namespace command
 			{
 				*reinterpret_cast<int*>(1) = 0;
 			});
-
-			/*add("consoleList", [](const params& params)
-				{
-					const std::string input = params.get(1);
-
-					std::vector<std::string> matches;
-					game_console::find_matches(input, matches, false);
-
-					for (auto& match : matches)
-					{
-						auto* dvar = game::Dvar_FindVar(match.c_str());
-						if (!dvar)
-						{
-							console::info("[CMD]\t %s\n", match.c_str());
-						}
-						else
-						{
-							console::info("[DVAR]\t%s \"%s\"\n", match.c_str(), game::Dvar_ValueToString(dvar, dvar->current, 0));
-						}
-					}
-
-					console::info("Total %i matches\n", matches.size());
-				});*/
 
 			add("commandDump", [](const params& argument)
 			{
@@ -359,7 +345,7 @@ namespace command
 				console::info("================================ END COMMAND DUMP =================================\n");
 			});
 
-			/*add("listassetpool", [](const params& params)
+			add("listassetpool", [](const params& params)
 			{
 				if (params.size() < 2)
 				{
@@ -400,6 +386,7 @@ namespace command
 				}
 			});
 
+			/*
 			add("vstr", [](const params& params)
 			{
 				if (params.size() < 2)
@@ -503,9 +490,9 @@ namespace command
 
 		static void add_commands_mp()
 		{
-			//client_command_hook.create(0x1402E98F0, &client_command);
+			client_command_hook.create(0x140336000, &client_command);
 
-			/*add_sv("god", [](const int client_num, const params_sv&)
+			add_sv("god", [](const int client_num, const params_sv&)
 			{
 				if (!game::Dvar_FindVar("sv_cheats")->current.enabled)
 				{
@@ -640,7 +627,7 @@ namespace command
 				{
 					game::G_TakePlayerWeapon(ps, wp);
 				}
-			});*/
+			});
 		}
 	};
 }

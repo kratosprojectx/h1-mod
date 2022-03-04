@@ -1358,18 +1358,22 @@ namespace game
 
 		struct EntityState
 		{
-			char entityNum;
+			uint16_t entityNum;
 		}; // size = ?
 
+#pragma pack(push, 1)
 		struct gentity_s
 		{
 			EntityState s;
-			char __pad0[343];
+			char __pad0[342];
 			gclient_s* client;
 			char __pad1[80];
 			int flags;
 			char __pad2[300];
 		}; // size = 736
+#pragma pack(pop)
+
+		static_assert(sizeof(gentity_s) == 736);
 
 		struct playerState_s
 		{
@@ -1408,6 +1412,8 @@ namespace game
 			char __pad[59200];
 			int flags; // 59200
 		};
+
+		static_assert(sizeof(gclient_s) == 59204);
 
 		struct gentity_s
 		{

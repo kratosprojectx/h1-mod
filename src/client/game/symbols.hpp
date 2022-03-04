@@ -57,7 +57,14 @@ namespace game
 	WEAK symbol<int(const char* fname)> generateHashValue{0x1400FE8A0, 0x1401B1010};
 
 	WEAK symbol<void()> G_Glass_Update{0, 0x14033A640};
+
 	WEAK symbol<int(int clientNum)> G_GetClientScore{0, 0x140342F90};
+	WEAK symbol<unsigned int(const char* name)> G_GetWeaponForName{0x1402C2A90, 0x14038C300};
+	WEAK symbol<int(playerState_s* ps, unsigned int weapon, int dualWield, 
+		int startInAltMode, int, int, int, char, ...)> G_GivePlayerWeapon{0x1402C2DF0, 0x14038C750};
+	WEAK symbol<void(playerState_s* ps, unsigned int weapon, int hadWeapon)> G_InitializeAmmo{0x140270980, 0x14033EDD0};
+	WEAK symbol<void(int clientNum, unsigned int weapon)> G_SelectWeapon{0x1402C3750, 0x14038D1B0};
+	WEAK symbol<int(playerState_s* ps, unsigned int weapon)> G_TakePlayerWeapon{0x1402C3900, 0x14038D370};
 
 	WEAK symbol<char*(char* string)> I_CleanStr{0x1403CD230, 0x140503D00};
 
@@ -95,6 +102,9 @@ namespace game
 
 	WEAK symbol<ScreenPlacement* ()> ScrPlace_GetViewPlacement{0x1401981F0, 0x140288550};
 
+	WEAK symbol<void(XAssetType type, void(__cdecl* func)(XAssetHeader, void*), const void* inData, bool includeOverride)>
+	DB_EnumXAssets_Internal{0x1401C9C10, 0x1402BA830};
+	WEAK symbol<const char* (const XAsset* asset)> DB_GetXAssetName{0x14019A390, 0x14028BE50};
 	WEAK symbol<int(XAssetType type)> DB_GetXAssetTypeSize{0x14019A3B0, 0x14028BE70};
 
 	WEAK symbol<void(int clientNum, const char* menu, int a3, int a4, unsigned int a5)> LUI_OpenMenu{0x14039D5F0, 0x1404CD210};
@@ -159,6 +169,7 @@ namespace game
 	WEAK symbol<dvar_t*> sortedDvars{0, 0x14D064D00};
 
 	WEAK symbol<void*> DB_XAssetPool{0x140DE8C80, 0x140FEB5D0};
+	WEAK symbol<const char*> g_assetNames{0x1408B0870, 0x140FEA240};
 
 	WEAK symbol<int> keyCatchers{0x14243DAF0, 0x142D0BA9C};
 	WEAK symbol<PlayerKeyState> playerKeys{0x1422A873C, 0x142C19AFC};
